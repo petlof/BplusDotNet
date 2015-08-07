@@ -1,0 +1,684 @@
+<HTML>
+<head>
+<title>bplusdotnet html documentation</title>
+<style type="text/css">
+p  {
+	font-family: Arial, Helvetica, sans-serif;
+  	font-size: 10pt;
+  	text-decoration: none
+}
+a  {
+	color: #003066;
+	text-decoration: underline
+}
+a.anchor  {
+  	text-decoration: none
+	}
+ 
+a:active  {
+	color: #660095;
+	text-decoration: underline
+}
+a:hover {
+	color: #993311;
+}
+body  {
+  	font-family: Arial, Helvetica, sans-serif;
+  	font-size: 10pt;
+  	color: #000000;
+	background: #FFFFFF
+}
+h1  {
+	font-family: Arial, Helvetica, sans-serif;
+	font-size: 15pt;
+	color: #006699;
+	font-weight: bold
+}
+h2  {
+	font-family: Arial, Helvetica, sans-serif;
+	font-size: 12pt;
+	font-weight: bold;
+	color: #006699
+}
+h3  {
+	font-family: Arial, Helvetica, sans-serif;
+	font-size: 10pt;
+	font-weight: bold;
+	color: #006699
+}
+h4  {
+	font-family: Arial, Helvetica, sans-serif;
+	font-size: 9pt;
+	font-weight: normal;
+	font-style: italic;
+	color: #006699
+}
+hr  {
+	color: #006699
+}
+ol  {
+	font-family: Arial, Helvetica, sans-serif;
+	font-size: 10pt;
+	color: #000000
+}
+ul  {
+	font-family: Arial, Helvetica, sans-serif;
+	font-size: 10pt;
+	color: #000000
+}
+li  {
+	font-family: Arial, Helvetica, sans-serif;
+	font-size: 10pt;
+	color: #000000
+}	 
+td  {
+	font-family: Arial, Helvetica, sans-serif;
+	font-size: 10pt;
+	color: #000000
+}
+td.ltgreen  {
+	font-family : Arial, Helvetica, sans-serif;
+	background : #B5BE90;
+	font-size : 10pt;
+	text-align : center;
+	color : #000066
+}
+td.gold  {
+	font-family : Arial, Helvetica, sans-serif;
+	background : #D5D470;
+	font-size : 10pt;
+	text-align : center;
+	color : #000066
+}
+td.blue  {
+	font-family : Arial, Helvetica, sans-serif;
+	background : #7C7CA7;
+	font-size : 10pt;
+	text-align : center;
+	color : #000066
+}
+th  {
+	font-family: Arial, Helvetica, sans-serif;
+	font-size: 10pt;
+	font-weight: bold;
+	color: #000000
+}
+.issueComponent {
+	font-size: 12px;
+	font-weight: bolder;
+	color: #006699;
+	font-style: italic;
+}
+.answerQuestion {
+	font-family: Arial, Helvetica, sans-serif;
+	font-size: 9pt;
+	font-weight: bold;
+	color: #000000;
+}
+.answerAnswer {
+	font-family: Arial, Helvetica, sans-serif;
+	font-size: 9pt;
+}
+.top {
+	font-family: Arial, Helvetica, sans-serif;
+	font-size: 8pt;
+	text-decoration: underline;
+}
+.copyright {
+	font-family: Arial, Helvetica, sans-serif;
+	font-size: 8pt;
+}
+.questionQuestion {
+	font-size: 9pt;
+}
+.warning {
+	color: #CC0000;
+}
+</style>
+
+</head>
+<body>
+
+
+<table width="100%">
+<tr>
+<td>
+<img src="chordate.jpg" height="70" width="90">
+</td>
+<td>
+<h1>bplustreedotnet -- A B+tree implementation for .NET in C# with related modules</h1>
+</td>
+<td align="right">
+<img
+src="http://sourceforge.net/sflogo.php?group_id=110101&type=1">
+</a><br><a href="http://sourceforge.net/projects/bplusdotnet/">
+quickstart<br>
+bplusdotnet project page with download links</a>   
+</td>
+</tr>
+</table>
+
+<blockquote>
+<b>Executive Summary:</b>
+The bplusdotnet package is a library of cross compatible
+data structure implementations
+in C#, java, and Python which are
+useful for applications which need to store and retrieve persistent information.
+The bplusdotnet data structures make it easy to store string keys associated with values permanently.
+For example you could use bplusdotnet objects to associate names to addresses, or phone numbers
+to names, or book titles to book content, or names to face images.  
+The bplusdotnet package is an open source indexed file implementation 
+hosted on SourceForge.
+<p>
+Key features of the package include:
+<dl>
+<li> Very fast retrieval of values associated to key strings.
+<li> Cross platform portable file formats between standard C#, java, and Python implementations.
+<li> No practical data file size limitations.
+<li> Support for Unicode strings with localized string orderings. <font color=red>(localization for C# only)</font>
+<li> Key values as unicode strings with either unlimited length
+or maximum length fixed at the creation of the index.
+<li> Mapping values as unicode strings or byte arrays of arbitrary size or as long integers.
+<li> Random access to keys and values by key equality.
+<li> Sequential access to "larger" keys and values by localized Unicode key ordering.
+<li> Support for commits or aborts for groups of index modifications.
+<li> Hash based indexing options for better expected performance in some cases.
+<li> Optional automatic serialization and deserialization of serializable objects. <font color=red>(C# only)</font>
+<li> Configurable "core memory footprint" usage.
+<li> Automatic reclamation of unused file space.
+<li> Data structure recovery in some cases of file corruption.
+</dl>
+</blockquote>
+
+<blockquote>
+<b>General Technical Notes:</b> the BplusDotNet package provides a variant of
+the classical BplusTree file indexing structure, which is one of the most beautiful and useful
+inventions of computer science, with significance to civilization rivalling the invention
+of the arch, double entry accounting, and arabic numerals.  This variant differs from
+the classical presentation in that it does not maintain "next leaf" pointers in leaf nodes
+in order to provide a higher resilience to errors in the case of program failures -- in
+this way a "commit" or "abort" can be made final with the completion of a single disk buffer
+write. To provide additional transaction resilience no disk buffer is ever modified in place
+-- new data is always written to new buffers and the old buffers are release for reuse
+only after the root record has been committed.
+<p>
+For additional discussion of B+trees and related structures please see
+<a href="http://bibin.hio.no/sivbib2000/databaseteori/Ubiqbtre.htm">
+The Ubiquitous B-Tree
+(Computing Surveys, Vol. 11, No. 2, June 1979) also available at
+http://bibin.hio.no/sivbib2000/databaseteori/Ubiqbtre.htm as of this writing.
+</a>
+</blockquote>
+
+<h1>Project Links and Downloads</h1>
+
+Please see the <a href="http://sourceforge.net/projects/bplusdotnet/">Source forge bplusdotnet project page 
+http://sourceforge.net/projects/bplusdotnet/</a>
+for links to downloads and information regarding source code [CVS] access and project membership.
+
+<h1>Documentation</h1>
+
+The documentation for the modules consist of the remainder of this document in addition
+to the comments preceding the class, attribute, and method definitions found in the source
+code (using the standard VisualStudio.NET conventions).
+<font color=red>The documentation addresses the C# implementation primarily.  The java and Python implementations
+are very similar.  See the notes at the bottom additional comments regarding the java and Python implementations.</font>
+<p>
+The tree interface source documentation are kept primarily in the <b>ITreeIndex.cs</b> interface
+definition file to avoid redundancy in the implementation files.
+<p>
+The <b>BplusTree</b> structure provides the most accessible interface for storing
+and retrieving string entries associated with string keys.  For <b>BplusTree</b> the key
+length must map to a sequence of bytes (using utf8 encoding) which doesn't exceed the
+key length defined at the time the tree is created.  The <b>xBplusTree</b> structure removes
+this keylength limitation (see below).
+
+<h3>Creating a new BplusTree</h3>
+
+There are quite a few ways to create a new BplusTree using the various signatures of the
+<b>BplusDotNet.BplusTree.Initialize</b> static method.
+<pre>
+     // CREATE A NEW BPLUSTREE USING FILE PATHS
+     public static BplusTree Initialize(string treefileName, string blockfileName, 
+			int KeyLength, int CultureId,
+			int nodesize, int buffersize)
+
+
+     public static BplusTree Initialize(string treefileName, 
+			string blockfileName, int KeyLength, int CultureId) 
+
+     public static BplusTree Initialize(string treefileName, string blockfileName, int KeyLength) 
+
+     // CREATE A NEW BPLUSTREE USING AN EXISTING STREAM
+     public static BplusTree Initialize(System.IO.Stream treefile, 
+			System.IO.Stream blockfile, int KeyLength, int CultureId,
+			int nodesize, int buffersize) 
+
+     public static BplusTree Initialize(System.IO.Stream treefile, 
+			System.IO.Stream blockfile, int KeyLength, int CultureId) 
+
+     public static BplusTree Initialize(System.IO.Stream treefile, 
+			System.IO.Stream blockfile, int KeyLength) 
+</pre>
+Each of these methods create a 
+BplusTree with an associated tree index stream, an associated block data stream for
+values, a maximum key size (in bytes), an associated Culture for determining the key
+ordering, a maximum number of children per leaf nodes (nodesize), and a buffersize
+for breaking value strings into chunks in the data file.
+<p>
+In the signatures above the files may be provided as prepared streams or may be
+specified as file system path name strings.
+<p>
+The key size determines how large keys may be in the index -- if it is set too low
+you will not be able to place large enough keys into the structure, if it is set too
+high you will waste space in the index file.
+<p>
+The CultureId determines the ordering to use for sorting the key values.  
+The default used is <b>System.Globalization.CultureInfo.InvariantCulture.LCID</b>.
+<font color=red>(See JAVA/PYTHON NOTE 1.)</font>
+<p>
+The <b>nodesize</b> and <b>buffersize</b> parameters may be useful for optimization
+and testing, but most users may find the default values acceptible.
+</p>
+
+<h3>Accessing an existing BplusTree</h3>
+
+Gaining access to an existing BplusTree is simple than creating a new one because most of the parameters
+are stored in the file information within the tree.  In this case you need only specify
+the file names or the stream objects to use for the 
+<b>BplusDotNet.BplusTree.ReOpen</b> static method.
+<pre>
+     public static BplusTree ReOpen(System.IO.Stream treefile, System.IO.Stream blockfile) 
+
+     public static BplusTree ReOpen(string treefileName, string blockfileName) 
+</pre>
+
+
+<h3>Using a BplusTree</h3>
+
+<p>
+To associate one string with
+another using a Bplustree <b>bpt</b> write
+<pre>
+     bpt["one string"] = "another string";
+     bpt["a second string"] = "more information";
+</pre>
+To get the associated value back write
+<pre>
+     Console.WriteLine("the value for 'one string' is "+bpt["one string"])
+     // prints "the value for 'one string' is another string\r\n" to the console
+</pre>
+<font color=red>(See JAVA NOTE 2.)</font>
+<p>
+If you attempt to retrieve a key which has no associated value the <b>bpt</b> data
+structure with throw a <b>BplusTreeException</b>.  To test whether a key has an
+associated value use the <b>ContainsKey</b> method.
+<pre>
+     if (bpt.ContainsKey("no such key yet")) {
+         Console.WriteLine("the value for 'no such key yet' is "+bpt["no such key yet"]);
+     } else {
+         Console.WriteLine("the key 'no such key yet' is not in the index");
+     }
+</pre>
+<p>
+The assignment made above will not be made "permanent" for future use, however
+until the index <b>bpt</b> is committed, using
+<pre>
+     bpt.Commit();
+</pre>
+Alternatively, to discard all modifications since the last commit point (or since the
+index was opened if that was more recent) use
+<pre>
+     bpt.Abort();
+</pre>
+To change the value associated with a key use the same index assignment notation.
+<pre>
+     bpt["one string"] = "an alternate string";
+</pre>
+To remove the association of a key with a value use
+<pre>
+     bpt.RemoveKey("a second string");
+</pre>
+The <b>NextKey</b> method gets the next larger key than the argument or <b>null</b>
+if there is no larger key.  So to
+list all the keys and values between keys "russia" to the end of the index
+<pre>
+     string currentkey = "russia";
+     while (currentkey!=null) {
+         if (bpt.ContainsKey(currentkey)) {
+             Console.WriteLine("key="+currentkey+" value="+bpt[currentkey]);
+         }
+         currentkey = bpt.NextKey(currentkey);
+     }
+</pre>
+If you want to start at the first key of the index use
+<pre>
+     string currentkey = bpt.FirstKey();
+</pre>
+When you are done with an index which you have modified it is good practice to
+either <b>Commit</b> or <b>Abort</b> the modifications.  If you wish to shut down
+a modified index immediately without going throught the abort procedure you may
+use the <b>ShutDown</b> method, which is equivalent to aborting but may leave some
+space in the index and data files unreachable.  To attempt to recover unreachable
+space in the files after reopening an index use the <b>Recover(true)</b> method.
+
+<h3>On xBplusTree</h3>
+
+As mentioned above the <b>xBplusTree</b> implementation is very similar to the
+<b>BplusTree</b> implementation, except that the structure permits keys to be arbitrarily
+large.  [The "x" is for "extended".]
+<p>
+The methods to create a <b>xBplusTree</b> have the same signature as those for creating
+a <b>BplusTree</b> except for the return type.  For example here is the most verbose
+overload for <b>BplusDotNet.xBplusTree.Initialize</b>:
+<pre>
+xBplusTree Initialize(string treefileName, string blockfileName, 
+                        int PrefixLength, int CultureId,
+			int nodesize, int buffersize) 
+</pre>
+the only difference being that <b>PrefixLength</b> replaces <b>KeyLength</b>.
+The <b>PrefixLength</b> value determines the number of bytes of each key which
+is used to locate it within the internal tree structure.
+<p>
+After creation an <b>xBplusTree</b> presents the exact same interface as a
+<b>BplusTree</b> except that all key values will be permitted in the index.
+<p>
+<b>NOTE:</b> The <b>xBplusTree</b> implementation is more expensive and slower
+than the <b>BplusTree</b> implementation -- so the <b>BplusTree</b> implementation
+should be preferred whenever this is acceptible.  Also, an <b>xBplusTree</b> may
+perform poorly when, for example, 100000 strings are identified by the same
+byte prefix.  It is a good idea to pick a <b>PrefixLength</b> large enough so that
+only a few key strings are expected to have the same prefix for the given
+application.
+
+<h3>On hBplusTrees</h3>
+
+If you need unlimited key lengths and do not need to access the elements in
+key sorted order you should consider using the <b>hBplusTree</b> variant.
+[In this case the "h" stands for "hashed".]
+<p>
+The <b>hBplusTree</b> variant uses a hashing scheme to allow keys of unlimited
+length with expected good performance regardless of the key values.  However
+since the hashing mechanism randomizes the placement of the key values in the
+underlying tree implementation the <b>FirstKey</b> and <b>NextKey</b>
+methods will not present the keys in dictionary order, but will traverse the keys
+in an arbitrary order.
+
+<h3>On BplusTreeBytes, xBplusTreeBytes, hBplusTreeBytes, and BplusTreeLong</h3>
+
+<b>BplusTreeBytes</b> is similar to <b>BplusTree</b> except that the values associated
+with keys are arrays of bytes instead of unicode strings.  
+<b>xBplusTreeBytes</b> is the analogous variant of <b>BplusTreeBytes</b> which
+supports unlimited key lengths, and maps unicode string keys to byte array values.
+<b>hBplusTreeBytes</b> is the analogous variant of <b>BplusTreeBytes</b> which
+supports unlimited key lengths using a hashing scheme to avoid key prefix collision problems
+and with no support for key sorted traversal.
+<b>BplusTreeLong</b> are
+mainly useful for more advanced uses.  All tree index data structures support the
+<b>ITreeIndex</b> interface but have different set/get datatypes for 
+<b>theValue</b> for the index notation
+<b>bpt[key] = theValue</b>.  The interfaces <b>IByteTree</b>, <b>IStringTree</b>
+and <b>IObjectTree</b> defined specialized interfaces for trees that store byte
+arrays, strings, and serialized objects respectively.  These interfaces inherit
+<b>ITreeIndex</b> and are defined in the <b>ITreeIndex.cs</b> source file.
+
+<h3>On SerializedTrees</h3>
+
+More sophisticated programmers may wish to use <b>SerializedTree</b>s to
+automatically store and retrieve <em>serializable objects</em> (using the .NET
+serialization methods).  A <b>SerializedTree</b> can be built using any of the
+<b>IByteTree</b> implementations.  The details and complexities involved
+in object serialization are beyond the scope of this document.
+<font color=red>(See JAVA/PYTHON NOTE 3.)</font>
+
+<h2>Feature Matrix</h2>
+
+The following table summarizes the salient differences among the various index
+implementations.  In the table the earlier implementations are simpler and more efficient
+than later ones, and thus the earlier listed implementations should be preferred
+when there is no reason to use a later one.
+
+<table border>
+	<tr>
+		<th>Index</th>
+		<th>Value type</th>
+		<th>Key Size</th>
+		<th>Safe for key<br> prefix Collisions</th>
+		<th>Dictionary Order<br>Key Traversal</th>
+	</tr>
+	<tr>
+		<td> <!-- index name --> BplusTreeLong</td>
+		<td> <!-- value type --> long integers</td>
+		<td> <!-- key Size --> maximum fixed at creation</td>
+		<td> <!-- collisions --> not applicable</td>
+		<td> <!-- traversal --> yes</td>
+	</tr>
+	<tr>
+		<td> <!-- index name --> BplusTreeBytes</td>
+		<td> <!-- value type --> byte arrays</td>
+		<td> <!-- key Size --> maximum fixed at creation</td>
+		<td> <!-- collisions --> not applicable</td>
+		<td> <!-- traversal --> yes</td>
+	</tr>
+	<tr>
+		<td> <!-- index name --> BplusTree</td>
+		<td> <!-- value type --> unicode strings</td>
+		<td> <!-- key Size --> maximum fixed at creation</td>
+		<td> <!-- collisions --> not applicable</td>
+		<td> <!-- traversal --> yes</td>
+	</tr>
+	<tr>
+		<td> <!-- index name --> xBplusTreeBytes</td>
+		<td> <!-- value type --> byte arrays</td>
+		<td> <!-- key Size --> unlimited</td>
+		<td> <!-- collisions --> common prefixes in keys<br> will cause collisions</td>
+		<td> <!-- traversal --> yes</td>
+	</tr>
+	<tr>
+		<td> <!-- index name --> xBplusTree</td>
+		<td> <!-- value type --> unicode string</td>
+		<td> <!-- key Size --> unlimited</td>
+		<td> <!-- collisions --> common prefixes in keys<br> will cause collisions</td>
+		<td> <!-- traversal --> yes</td>
+	</tr>
+	<tr>
+		<td> <!-- index name --> hBplusTreeBytes</td>
+		<td> <!-- value type --> byte arrays</td>
+		<td> <!-- key Size --> unlimited</td>
+		<td> <!-- collisions --> none expected</td>
+		<td> <!-- traversal --> key traversal order <br>is random</td>
+	</tr>
+	<tr>
+		<td> <!-- index name --> hBplusTree</td>
+		<td> <!-- value type --> unicode strings</td>
+		<td> <!-- key Size --> unlimited</td>
+		<td> <!-- collisions --> none expected</td>
+		<td> <!-- traversal --> key traversal order <br>is random</td>
+	</tr>
+	<tr>
+		<td> <!-- index name --> SerializedTree</td>
+		<td> <!-- value type --> Serializable objects</td>
+		<td> <!-- key Size --> same properties as the<br>
+                            underlying tree implementation</td>
+		<td> <!-- collisions --> same properties as the<br>
+                            underlying tree implementation</td>
+		<td> <!-- traversal --> same properties as the<br>
+                            underlying tree implementation</td>
+	</tr>
+</table>
+
+<h2>Installation</h2>
+
+<p>
+The BplusDotNet distribution includes the dynamically loaded assembly BplusDotNet.dll
+which may be added as a reference to any .NET based programming project.  Programmers 
+with Visual Studio .NET may also open the project file BplusDotNet.csprof
+with VS.NET and rebuild the module.
+</p>
+
+<h2>Tests</h2>
+
+<p>
+The BplusDotNet distribution also includes the testing module which attempts
+to hammer the implementation in confusing ways.  Execute testing.exe or compile and
+run the testing project to run the tests on your system.  If it completes with no
+exception thrown then the tests have passed.  By default the tests use "in memory
+structures" to emulate disk based files -- edit the <b>testdirectory</b> static
+variable to test to real disk files. 
+<font color=red>(See JAVA NOTE 4.)</font>
+
+
+<h2>Deficiencies</h2>
+
+At the time of this writing there are no known bugs.  It is certain that the code
+could be refined and sped up a bit, but I don't think the speed difference would
+be noticable (I've been wrong before, however).  Please use the project support procedure
+if you find bugs or wish to offer other improvements.
+
+
+<h2>Guide to the modules</h2>
+
+The package provides three indexed file implementations:
+<dl>
+<li>
+<b>BplusTree.cs</b> provides a bplusTree based file indexing structure which uses
+an index file to provide quick access to data stored in a separate data file.  For
+BplusTree.cs both the keys and values are maintained as unicode strings, and the values
+may be arbitrarily large.  <b>xBplusTree.cs</b> provides a similar implementation which
+allows keys to be arbitrarily large as well.  <b>hBplusTree.cs</b> provides a similar
+implementation allowing arbitrarily long keys using a hashing scheme. <b>SerializedTree.cs</b>
+provides an implementation which automatically serializes and deserializes serializable
+values.
+<li>
+<b>BplusTreeBytes.cs</b> is similar to <b>BplusTree.cs</b> except the values are
+maintained as arbitrarily large arrays of bytes (unformatted Binary Large Objects).
+<b>xBplusTreeBytes.cs</b> provides a similar implementation which
+allows keys to be arbitrarily large as well. <b>hBplusTreeBytes</b> provides an analogous
+implementation using the hashing scheme described above.
+<li>
+<b>BplusTreeLong.cs</b> is the most primative bplus tree implementation where the
+values associated with keys are uninterpreted long integers (which are usually used
+to represent block numbers or seek positions into a separate data file.  The <b>BplusTreeLong.cs</b>
+objects use a single file to represent the mapping of string keys to long integers.
+</dl>
+<p>
+Each of these tree implementations supports the <b>ITreeIndex.cs</b> interface which
+defines common methods for traversing, retrieving, modifying, and maintaining the index
+structures.  In particular the <b>ITreeIndex</b> interface defines <b>Commit</b> and <b>Abort</b>
+methods which permits programmers to make groups of index modifications permanent or
+forget groups of modifications.
+<p>
+Furthermore there are two additional buffered file implementations
+<dl>
+<li>
+<b>BufferFile.cs</b> defines a wrapper for file streams which presents the file stream
+as a sequence of byte buffers.  This basic wrapper is used by all the other modules.
+<li>
+<b>LinkedFile.cs</b> defines a wrapper over <b>BufferFile</b> which links fixed size
+buffers into linked lists of arbitrary length and also supports freeing and reallocation
+of unused buffers.
+</dl>
+
+<h2>Caveat regarding Commit/Abort</h2>
+
+The <b>Commit</b> and <b>Abort</b> methods will provide atomic transactional changes
+to indices <em>under the assumption that the underlying <b>Stream.Write</b> operations
+are atomic</em>.  If any <b>Stream.Write</b> fails after making partial modifications
+to a file then the index structures may be damaged in a way that cannot be repaired.
+
+<H2><font color=red>Notes on the java implementation</font></H2>
+
+Except for the serialized tree implementation all of the index types defined in the C#
+implementation have compatible java implementations.  In particular indexes created using
+the C# modules can be opened and modified by the java modules and the reverse.
+<p>
+The java implementations reside
+in the package
+<pre>
+	NET.sourceforge.BplusJ.BplusJ
+</pre>
+and the test module resides in
+<pre>
+	NET.sourceforge.BplusJ.testing;
+</pre>
+<p>
+<font color=red>JAVA/PYTHON NOTE 1: LOCALIZATION NOT YET SUPPORTED.</font>  The java implementation
+only permits the invariant culture id at this time <B>BplusTreeLong.INVARIANTCULTUREID = 127.</B>
+<p>
+<font color=red>JAVA NOTE 2: INDEXING METHODS.</font> The subscripting notation for tree indexing
+cannot be used in java, so the java implementation uses a method notation instead
+<pre>
+	tree.set(key, value); // replaces tree[key] = value;
+	value = tree.get(key); // replaces value = tree[key];
+</pre>
+<p>
+<font color=red>JAVA/PYTHON NOTE 3: AUTOMAGIC SERIALIZATION/DESERIALIZATION NOT YET.</font>
+There is no analogue to the <b>SerializedTree</b> provided in the java package at this time.
+<p>
+<font color=red>JAVA NOTE 4: EDIT THE TEST SUITE TO DEFINE THE TEST DIRECTORY.</font>
+If you run the java test suite "out of the box" you will see something like this:
+<pre>
+	C:\installstuff\BplusDotNet_beta4> javac NET\sourceforge\BplusJ\testing\bplustest.java
+	C:\installstuff\BplusDotNet_beta4> java NET.sourceforge.BplusJ.testing.bplusTest
+	encode/decode of ints ok
+	encode/decode of longs ok
+	encode/decode of longs ok
+	TESTING BUFFERFILE
+	to run these tests you need to edit the source file, adding a String definition
+	for tempdirectory
+	Exception in thread "main" ....
+</pre>
+This is because the java test suite has no "test to memory" option, but must test to
+disk files.  In order to make the tests run, do as requested and modify the definition
+for <b>tempdirectory</b> in bplusTest.java to point to an existing temporary directory
+<pre>
+	static String tempdirectory = "c:\\tmp"; // set to a directory to test storing to/from files
+</pre>
+The <b>CompatTest()</b> method (defined in C# and java) is intended to test the portability
+of the index file formats.  To test the portability properly you need to define
+the <b>tempdirectory</b> variable to point to the same directory in each test driver program and run each test
+twice (java, C#, java, C#) in order test that one implementation can open a structure created
+by the other.
+
+<H2><font color=red>Notes on the Python implementation</font></H2>
+
+To install the python implementation as a library use the setup bootstrap provided:
+<pre>
+C:\installstuff\BplusDotNet_beta4>setup.py install
+</pre>
+The python implementation also includes a <b>testing.py</b> test suite.  This program is slower
+than the other two because it scans the complete contents of the trees very many times.  In real use
+the Python implementation should not be noticably slower than the others.  Once installed use the
+python implementation in a python program or from the command line, for example, as shown below:
+<pre>
+C:\anydirectory>python
+Python 2.3.4 (#53, May 25 2004, 21:17:02) [MSC v.1200 32 bit (Intel)] on
+Type "help", "copyright", "credits" or "license" for more information.
+>>> import BplusPy.BplusTree
+>>> tree = BplusPy.BplusTree.Initialize("/tmp/x.dat", "/tmp/y.dat", 15)
+>>> tree["hello"] = "goodbye"
+>>> print tree["hello"]
+goodbye
+>>> print repr(tree["hello"])
+u'goodbye'
+>>> tree.Commit()
+>>> tree.ShutDown()
+</pre>
+Note that all implementations automatically convert keys to unicode strings and
+the <b>[xh]BplusTree</b> implementations also automatically convert the values to unicode
+strings. (The <b>[xh]BplusTreeBytes</b> implementations keep values as python strings --
+8bit clean byte sequences).
+
+
+<h1>Copywrite and Licensing</h1>
+
+<p>
+The bplusdotnet package is Copywrite Aaron Watters 2004.  the package is licensed under the BSD
+open source license
+ which means that you can do basically anything with it (except claim that you own it).
+</p>
+
+</body>
+
+</HTML>
+
